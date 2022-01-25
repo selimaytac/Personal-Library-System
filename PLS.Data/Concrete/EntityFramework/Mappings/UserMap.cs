@@ -10,9 +10,9 @@ public class UserMap : IEntityTypeConfiguration<User>
     {
         builder.HasKey(u => u.Id);
         builder.Property(u => u.Id).ValueGeneratedOnAdd();
-        builder.Property(u => u.Email).IsRequired().HasMaxLength(50);
+        builder.Property(u => u.Email).IsRequired().HasMaxLength(70);
         builder.HasIndex(u => u.Email).IsUnique();
-        builder.Property(u => u.UserName).IsRequired().HasMaxLength(30);
+        builder.Property(u => u.UserName).IsRequired().HasMaxLength(50);
         builder.HasIndex(u => u.UserName).IsUnique();
         builder.Property(u => u.PasswordHash).IsRequired();
         builder.Property(u => u.PasswordSalt).IsRequired();
@@ -25,7 +25,6 @@ public class UserMap : IEntityTypeConfiguration<User>
         builder.Property(u => u.IsDeleted).IsRequired();
         builder.Property(u => u.Note).HasMaxLength(500);
         builder.ToTable("Users");
+        
     }
-    
-    // TODO: Add first user.
 }

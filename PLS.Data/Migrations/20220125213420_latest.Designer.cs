@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PLS.Data.Concrete.EntityFramework.Contexts;
 
@@ -11,9 +12,10 @@ using PLS.Data.Concrete.EntityFramework.Contexts;
 namespace PLS.Data.Migrations
 {
     [DbContext(typeof(PLSContext))]
-    partial class PLSContextModelSnapshot : ModelSnapshot
+    [Migration("20220125213420_latest")]
+    partial class latest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,32 +120,6 @@ namespace PLS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 1, 26, 0, 45, 47, 471, DateTimeKind.Local).AddTicks(6704),
-                            Description = "Admin has all permissions.",
-                            IsActive = true,
-                            IsDeleted = false,
-                            ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 1, 26, 0, 45, 47, 471, DateTimeKind.Local).AddTicks(6705),
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 1, 26, 0, 45, 47, 471, DateTimeKind.Local).AddTicks(6711),
-                            Description = "User can only update allowed resources.",
-                            IsActive = true,
-                            IsDeleted = false,
-                            ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 1, 26, 0, 45, 47, 471, DateTimeKind.Local).AddTicks(6712),
-                            Name = "User"
-                        });
                 });
 
             modelBuilder.Entity("PLS.Entities.Concrete.Source", b =>
