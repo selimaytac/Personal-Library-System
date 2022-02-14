@@ -8,6 +8,6 @@ public interface IAuthService
 {
     Task<IDataResult<User>> RegisterAsync(UserAddDto userAddDto);
     Task<IDataResult<UserDto>> GetAsync(int userId);
-    Task<bool> UserExists(string username);
-    Task<IDataResult<AuthenticateResponse>> AuthenticateAsync(AuthenticateRequest request);
+    Task<bool> UserExistsAsync(string username);
+    Task<IDataResult<string>> AuthenticateAsync(AuthenticateRequest request);
 }

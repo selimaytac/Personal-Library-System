@@ -1,8 +1,8 @@
 using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using PLS.Data.Abstract;
 using PLS.Entities.Concrete;
-using PLS.Entities.Configures;
 using PLS.Entities.Dtos;
 using PLS.Services.Abstract;
 using PLS.Shared.Results.Abstract;
@@ -13,15 +13,15 @@ namespace PLS.Services.Concrete;
 
 public class UserService : IUserService
 {
-    private readonly AppSettings _appSettings;
     private readonly IMapper _mapper;
+    private readonly IConfiguration _configuration;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UserService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<AppSettings> appSettings)
+    public UserService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _appSettings = appSettings.Value;
+        _configuration = configuration;
     }
 
     public async Task<IDataResult<UserDto>> GetAsync(int userId)

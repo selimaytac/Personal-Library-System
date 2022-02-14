@@ -11,14 +11,16 @@
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controllers" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\PLS.Services\PLS.Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\Attributes" />
+      <Folder Include="Helpers\Middlewares" />
     </ItemGroup>
 
 </Project>

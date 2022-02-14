@@ -1,7 +1,9 @@
+using System.ComponentModel;
+
 namespace PLS.Entities.Enums;
 
 public enum RoleEnum
 {
-    Admin,
-    User
+    Admin = 1,
+    User = 2
 }

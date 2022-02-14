@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using PLS.Entities.Concrete;
+using PLS.Entities.Enums;
 using PLS.Shared.Entities.Abstract;
 
 namespace PLS.Entities.Dtos;
@@ -27,6 +28,8 @@ public class UserAddDto
     [DataType(DataType.Password)]
     public string Password { get; set; }
 
+    // TODO: Change this
+    [Range(1, 2, ErrorMessage = "Please select a role between 1-2.")]
     public int RoleId { get; set; }
 
     [DisplayName("Is Active?")]

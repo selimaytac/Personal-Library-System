@@ -1,57 +1,56 @@
+using System.Configuration;
+using System.Text;
 using System.Text.Json.Serialization;
-using PLS.API.Helpers.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using PLS.Entities.Concrete;
-using PLS.Entities.Configures;
 using PLS.Services.AutoMapper.Profiles;
 using PLS.Services.Extensions;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-{   
+{
     var services = builder.Services;
 
     services.AddCors();
     services.AddControllers().AddJsonOptions(x =>
     {
-        // serialize enums as strings in api responses (e.g. Role)
         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         x.JsonSerializerOptions.WriteIndented = true;
-        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(options =>
-    {
-        options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-            Description = "JWT Authorization header using the Bearer scheme."
-        });
-        options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-        {
-            {
-                new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
-                    Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                    {
-                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                new string[] { }
-            }
-        });
-    });
-
-    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
     services.AddAutoMapper(typeof(UserProfile));
     services.LoadMyServices();
+
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Description = "Standart Authorization header using theBearer scheme (\"bearer {token}\")",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        });
+
+        options.OperationFilter<SecurityRequirementsOperationFilter>();
+    });
+
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey =
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 }
 
 var app = builder.Build();
@@ -70,9 +69,6 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-app.UseMiddleware<ErrorHandlerMiddleware>();
-
-app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
