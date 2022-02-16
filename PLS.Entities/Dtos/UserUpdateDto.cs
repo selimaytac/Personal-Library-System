@@ -1,11 +1,15 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using PLS.Entities.Concrete;
+using PLS.Shared.Entities.Abstract;
 
 namespace PLS.Entities.Dtos;
 
 public class UserUpdateDto
 {
+    [Required(ErrorMessage = "{0} cannot be empty.")]
+    public int Id { get; set; }
+    
     [DisplayName("User Name")]
     [Required(ErrorMessage = "{0} cannot be empty.")]
     [MaxLength(50, ErrorMessage = "{0} cannot exceed {1} characters.")]
@@ -26,9 +30,13 @@ public class UserUpdateDto
     [DataType(DataType.Password)]
     public string Password { get; set; }
 
+    // TODO: Change this
+    [Range(1, 2, ErrorMessage = "Please select a role between 1-2.")]
     public int RoleId { get; set; }
 
     [DisplayName("Is Active?")]
     [Required(ErrorMessage = "{0} cannot be empty.")]
     public bool IsActive { get; set; }
+
+    public string? Note { get; set; } = null;
 }

@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using PLS.Entities.Concrete;
-using PLS.Entities.Enums;
 using PLS.Shared.Entities.Abstract;
 
 namespace PLS.Entities.Dtos;

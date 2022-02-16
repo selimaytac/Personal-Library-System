@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddDbContext<PLSContext>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddScoped<IJwtUtils, JwtUtils>();
+        serviceCollection.AddScoped<IAuthUtils, AuthUtils>();
         serviceCollection.AddScoped<IAuthService, AuthService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         return serviceCollection;
