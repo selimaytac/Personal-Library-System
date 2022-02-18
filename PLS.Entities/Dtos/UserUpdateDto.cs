@@ -8,6 +8,7 @@ namespace PLS.Entities.Dtos;
 public class UserUpdateDto
 {
     [Required(ErrorMessage = "{0} cannot be empty.")]
+    [Range(1, int.MaxValue, ErrorMessage = "{0} cannot be zero.")]
     public int Id { get; set; }
     
     [DisplayName("User Name")]

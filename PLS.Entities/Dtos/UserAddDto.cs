@@ -30,4 +30,6 @@ public class UserAddDto
     [DisplayName("Is Active?")]
     [Required(ErrorMessage = "{0} cannot be empty.")]
     public bool IsActive { get; set; }
+    
+    public string? Note { get; set; } = null;
 }

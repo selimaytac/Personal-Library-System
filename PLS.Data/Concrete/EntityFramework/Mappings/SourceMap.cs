@@ -22,6 +22,7 @@ public class SourceMap : IEntityTypeConfiguration<Source>
         builder.Property(a => a.Note).HasMaxLength(500);
         builder.HasOne<Category>(a => a.Category).WithMany(c => c.Sources).HasForeignKey(a => a.CategoryId);
         builder.HasOne<User>(a => a.User).WithMany(u => u.Sources).HasForeignKey(a => a.UserId);
+        builder.HasMany<Tag>(a => a.Tags).WithMany(c => c.Sources);
         builder.ToTable("Sources");
     }
     

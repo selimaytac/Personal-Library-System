@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PLS.Data.Concrete.EntityFramework.Contexts;
 
@@ -11,9 +12,10 @@ using PLS.Data.Concrete.EntityFramework.Contexts;
 namespace PLS.Data.Migrations
 {
     [DbContext(typeof(PLSContext))]
-    partial class PLSContextModelSnapshot : ModelSnapshot
+    [Migration("20220218231824_tags-added")]
+    partial class tagsadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
