@@ -8,8 +8,9 @@ using PLS.Shared.Results.ComplexTypes;
 
 namespace PLS.API.Controllers;
 
-[Route("api/[controller]/[action]")]
 [ApiController]
+[Route("api/[controller]/[action]")]
+[Authorize(Roles = RoleTypes.SuperAdmin + "," + RoleTypes.Admin)]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
@@ -19,6 +20,7 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Authenticate(AuthenticateRequest request)
     {
@@ -30,6 +32,7 @@ public class AuthController : ControllerBase
         return Unauthorized(response);
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Register(UserAddDto user)
     {
@@ -37,7 +40,6 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-    [Authorize(Roles = RoleTypes.Admin)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {

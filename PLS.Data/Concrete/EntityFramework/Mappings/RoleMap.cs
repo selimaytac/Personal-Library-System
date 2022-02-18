@@ -21,21 +21,34 @@ public class RoleMap : IEntityTypeConfiguration<Role>
         builder.Property(r => r.Note).HasMaxLength(500);
         builder.ToTable("Roles");
 
-        builder.HasData(new Role
-        {
-            Id = 1,
-            Description = "Admin has all permissions.",
-            Name = "Admin",
-            CreatedDate = DateTime.Now,
-            ModifiedDate = DateTime.Now,
-            IsActive = true,
-            IsDeleted = false,
-            CreatedByName = "Initial",
-            ModifiedByName = "Initial"
-        },
+        builder.HasData(
+            new Role
+            {
+                Id = 1,
+                Description = "SuperAdmin has all permissions and can access to configurations.",
+                Name = "SuperAdmin",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false,
+                CreatedByName = "Initial",
+                ModifiedByName = "Initial"
+            },
             new Role
             {
                 Id = 2,
+                Description = "Admin has all permissions.",
+                Name = "Admin",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false,
+                CreatedByName = "Initial",
+                ModifiedByName = "Initial"
+            },
+            new Role
+            {
+                Id = 3,
                 Description = "User can only update allowed resources.",
                 Name = "User",
                 CreatedDate = DateTime.Now,

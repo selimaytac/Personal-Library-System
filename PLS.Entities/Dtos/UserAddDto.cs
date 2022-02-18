@@ -27,10 +27,6 @@ public class UserAddDto
     [DataType(DataType.Password)]
     public string Password { get; set; }
 
-    // TODO: Change this
-    [Range(1, 2, ErrorMessage = "Please select a role between 1-2.")]
-    public int RoleId { get; set; }
-
     [DisplayName("Is Active?")]
     [Required(ErrorMessage = "{0} cannot be empty.")]
     public bool IsActive { get; set; }

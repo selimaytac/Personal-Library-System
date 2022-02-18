@@ -11,7 +11,7 @@ namespace PLS.API.Controllers;
 
 [ApiController]
 [Route("api/users")]
-[Authorize(Roles = RoleTypes.Admin)]
+[Authorize(Roles = RoleTypes.SuperAdmin + "," + RoleTypes.Admin)]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

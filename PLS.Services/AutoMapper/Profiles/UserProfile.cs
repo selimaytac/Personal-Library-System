@@ -10,7 +10,9 @@ public class UserProfile : Profile
     {
         CreateMap<UserAddDto, User>()
             .ForMember(
-                dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTime.Now));
+                dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTime.Now))
+            .ForMember(dest => dest.RoleId, opt => opt.MapFrom(x => 3));
+        
         CreateMap<UserUpdateDto, User>()
             .ForMember(
                 dest => dest.ModifiedDate, opt => opt.MapFrom(x => DateTime.Now));

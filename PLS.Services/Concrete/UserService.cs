@@ -43,7 +43,7 @@ public class UserService : IUserService
 
     public async Task<IDataResult<UserListDto>> GetAllAsync()
     {
-        var users = await _unitOfWork.Users.GetAllAsync(null, include => include.Role);
+        var users = await _unitOfWork.Users.GetAllAsync();
 
         if (users.Any())
             return new DataResult<UserListDto>(ResultStatus.Success, $"{users.Count} records found.", new UserListDto
@@ -57,7 +57,7 @@ public class UserService : IUserService
 
     public async Task<IDataResult<UserListDto>> GetAllByNonDeletedAsync()
     {
-        var users = await _unitOfWork.Users.GetAllAsync(u => !u.IsDeleted, include => include.Role);
+        var users = await _unitOfWork.Users.GetAllAsync(u => !u.IsDeleted);
 
         if (users.Any())
             return new DataResult<UserListDto>(ResultStatus.Success, $"{users.Count} records found.", new UserListDto
@@ -71,7 +71,7 @@ public class UserService : IUserService
 
     public async Task<IDataResult<UserListDto>> GetAllByNonDeletedAndActiveAsync()
     {
-        var users = await _unitOfWork.Users.GetAllAsync(u => !u.IsDeleted && u.IsActive, include => include.Role);
+        var users = await _unitOfWork.Users.GetAllAsync(u => !u.IsDeleted && u.IsActive);
 
         if (users.Any())
             return new DataResult<UserListDto>(ResultStatus.Success, $"{users.Count} records found.", new UserListDto
