@@ -41,9 +41,24 @@ public class UserService : IUserService
         return new DataResult<UserDto>(ResultStatus.Error, "No such user was found.", null);
     }
 
-    public async Task<IDataResult<UserListDto>> GetAllAsync()
+    public async Task<IDataResult<UserDto>> GetCurrentUserAsync(string userName)
     {
-        var users = await _unitOfWork.Users.GetAllAsync();
+        var user = await _unitOfWork.Users.GetAsync(u => u.UserName == userName);
+        
+        if (user != null)
+            return new DataResult<UserDto>(ResultStatus.Success, new UserDto
+            {
+                User = user,
+                ResultStatus = ResultStatus.Success
+            });
+        
+        return new DataResult<UserDto>(ResultStatus.Error, "No such user was found.", null);
+    }
+    
+
+    public async Task<IDataResult<UserListDto>> GetAllAsync(bool isDeleted = false, bool isActive = true)
+    {
+        var users = await _unitOfWork.Users.GetAllAsync(u => u.IsDeleted == isDeleted && u.IsActive == isActive);
 
         if (users.Any())
             return new DataResult<UserListDto>(ResultStatus.Success, $"{users.Count} records found.", new UserListDto
@@ -55,32 +70,14 @@ public class UserService : IUserService
         return new DataResult<UserListDto>(ResultStatus.Error, "No records found.", null);
     }
 
-    public async Task<IDataResult<UserListDto>> GetAllByNonDeletedAsync()
+    public async Task<IDataResult<int>> GetUserCountAsync(bool isDeleted = false, bool isActive = true)
     {
-        var users = await _unitOfWork.Users.GetAllAsync(u => !u.IsDeleted);
+        var userCount = await _unitOfWork.Users.GetAllAsync(u => u.IsDeleted == isDeleted && u.IsActive == isActive);
 
-        if (users.Any())
-            return new DataResult<UserListDto>(ResultStatus.Success, $"{users.Count} records found.", new UserListDto
-            {
-                Users = users,
-                ResultStatus = ResultStatus.Success
-            });
+        if (userCount.Any())
+            return new DataResult<int>(ResultStatus.Success, $"{userCount.Count} records found.", userCount.Count);
 
-        return new DataResult<UserListDto>(ResultStatus.Error, "No records found.", null);
-    }
-
-    public async Task<IDataResult<UserListDto>> GetAllByNonDeletedAndActiveAsync()
-    {
-        var users = await _unitOfWork.Users.GetAllAsync(u => !u.IsDeleted && u.IsActive);
-
-        if (users.Any())
-            return new DataResult<UserListDto>(ResultStatus.Success, $"{users.Count} records found.", new UserListDto
-            {
-                Users = users,
-                ResultStatus = ResultStatus.Success
-            });
-
-        return new DataResult<UserListDto>(ResultStatus.Error, "No records found.", null);
+        return new DataResult<int>(ResultStatus.Error, "No records found.", 0);
     }
 
     public async Task<IResult> UpdateAsync(UserUpdateDto userUpdateDto, string updatedByUserName)

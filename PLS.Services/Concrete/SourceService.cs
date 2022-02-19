@@ -12,8 +12,8 @@ namespace PLS.Services.Concrete;
 
 public class SourceService : ISourceService
 {
-    private readonly IMapper _mapper;
     private readonly IConfiguration _configuration;
+    private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
 
     public SourceService(IMapper mapper, IConfiguration configuration, IUnitOfWork unitOfWork)
@@ -28,64 +28,26 @@ public class SourceService : ISourceService
         var source = await _unitOfWork.Sources.GetAsync(s => s.Id == sourceId);
 
         if (source != null)
-        {
             return new DataResult<SourceDto>(ResultStatus.Success, new SourceDto
             {
                 Source = source,
                 ResultStatus = ResultStatus.Success
             });
-        }
 
         return new DataResult<SourceDto>(ResultStatus.Error, "Source not found", null);
     }
 
-    public async Task<IDataResult<SourceListDto>> GetAllAsync()
+    public async Task<IDataResult<SourceListDto>> GetAllAsync(bool isDeleted = false, bool isActive = true)
     {
-        var sources = await _unitOfWork.Sources.GetAllAsync();
+        var sources = await _unitOfWork.Sources.GetAllAsync(s => s.IsDeleted == isDeleted && s.IsActive == isActive);
 
         if (sources.Any())
-        {
             return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
                 new SourceListDto
                 {
                     Sources = sources,
                     ResultStatus = ResultStatus.Success
                 });
-        }
-
-        return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
-    }
-
-    public async Task<IDataResult<SourceListDto>> GetAllByNonDeletedAsync()
-    {
-        var sources = await _unitOfWork.Sources.GetAllAsync(s => !s.IsDeleted);
-
-        if (sources.Any())
-        {
-            return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
-                new SourceListDto
-                {
-                    Sources = sources,
-                    ResultStatus = ResultStatus.Success
-                });
-        }
-
-        return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
-    }
-
-    public async Task<IDataResult<SourceListDto>> GetAllByNonDeletedAndActiveAsync()
-    {
-        var sources = await _unitOfWork.Sources.GetAllAsync(s => !s.IsDeleted && s.IsActive);
-
-        if (sources.Any())
-        {
-            return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
-                new SourceListDto
-                {
-                    Sources = sources,
-                    ResultStatus = ResultStatus.Success
-                });
-        }
 
         return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
     }
@@ -99,14 +61,12 @@ public class SourceService : ISourceService
         var sources = await _unitOfWork.Sources.GetAllAsync(s => s.CategoryId == categoryId);
 
         if (sources.Any())
-        {
             return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
                 new SourceListDto
                 {
                     Sources = sources,
                     ResultStatus = ResultStatus.Success
                 });
-        }
 
         return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
     }
@@ -120,16 +80,23 @@ public class SourceService : ISourceService
         var sources = await _unitOfWork.Sources.GetAllAsync(s => tagIds.Contains(s.Id));
 
         if (sources.Any())
-        {
             return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
                 new SourceListDto
                 {
                     Sources = sources,
                     ResultStatus = ResultStatus.Success
                 });
-        }
 
         return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
+    }
+
+    public async Task<IDataResult<int>> GetSourceCount(bool isDeleted = false, bool isActive = true)
+    {
+        var count = await _unitOfWork.Sources.CountAsync(s => s.IsDeleted == isDeleted && s.IsActive == isActive);
+
+        if (count > 0) return new DataResult<int>(ResultStatus.Success, $"{count} records found.", count);
+
+        return new DataResult<int>(ResultStatus.Error, "No sources found.", 0);
     }
 
     public async Task<IDataResult<Source>> AddAsync(SourceAddDto sourceAddDto, string addedByUser)
@@ -141,7 +108,7 @@ public class SourceService : ISourceService
             var tags = await _unitOfWork.Tags.GetAllAsync(s => sourceAddDto.TagIds.Contains(s.Id));
             source.Tags = tags;
         }
-        
+
         source.CreatedByName = addedByUser;
         source.ModifiedByName = addedByUser;
 
@@ -165,7 +132,7 @@ public class SourceService : ISourceService
             await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"Source {source.Id} updated.");
         }
-        
+
         return new Result(ResultStatus.Error, "Source not found.");
     }
 
@@ -183,7 +150,7 @@ public class SourceService : ISourceService
             await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"Source {deletedSource.Id} deleted.");
         }
-        
+
         return new Result(ResultStatus.Error, "Source not found.");
     }
 
@@ -201,7 +168,7 @@ public class SourceService : ISourceService
             await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"SourceId: {deletedSource.Id} has been successfully restored.");
         }
-        
+
         return new Result(ResultStatus.Error, "Source not found.");
     }
 
@@ -213,9 +180,10 @@ public class SourceService : ISourceService
         {
             await _unitOfWork.Sources.DeleteAsync(source);
             await _unitOfWork.SaveAsync();
-            return new Result(ResultStatus.Success, $"SourceId: {source.Id} has been successfully deleted from the database.");
+            return new Result(ResultStatus.Success,
+                $"SourceId: {source.Id} has been successfully deleted from the database.");
         }
-        
+
         return new Result(ResultStatus.Error, "Source not found.");
     }
 }

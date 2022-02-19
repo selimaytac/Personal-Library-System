@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PLS.Entities.Concrete;
 using PLS.Entities.ConstTypes;
 using PLS.Entities.Dtos;
 using PLS.Services.Abstract;
@@ -11,7 +12,6 @@ namespace PLS.API.Controllers;
 
 [ApiController]
 [Route("api/users")]
-[Authorize(Roles = RoleTypes.SuperAdmin + "," + RoleTypes.Admin)]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -21,6 +21,7 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [Authorize(Roles = RoleTypes.Admins)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetUser([FromRoute] int id)
     {
@@ -28,34 +29,40 @@ public class UserController : ControllerBase
         return Ok(user);
     }
     
+    [Authorize(Roles = RoleTypes.All)]
+    [HttpGet("getcurrentuser")]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var userName = User?.Identity?.Name;
+        
+        if(string.IsNullOrEmpty(userName)) return BadRequest("User is not logged in.");
+        
+        var user = await _userService.GetCurrentUserAsync(userName);
+        return Ok(user);
+    }
+    
+    [Authorize(Roles = RoleTypes.Admins)]
     [HttpGet]
     public async Task<IActionResult> GetAllUsers(
-        [FromQuery(Name = "nonDeleted")] bool nonDeleted = false,
-        [FromQuery(Name = "onlyActive")] bool onlyActive = false)
+        [FromQuery(Name = "isDeleted")] bool isDeleted = false,
+        [FromQuery(Name = "isActive")] bool isActive = true)
     {
-        // Short Description:
-        // When nonDeleted is true, only non-deleted users are returned.
-        // When onlyActive is true, nondeleted and active users are returned,
-        // You can't get active and deleted users together, it returns all users.
-        IDataResult<UserListDto> users; 
+        var users = await _userService.GetAllAsync(isDeleted, isActive);
         
-        if (!(nonDeleted == false && onlyActive == false))
-        {
-            users = nonDeleted switch
-            {
-                true when onlyActive == false => await _userService.GetAllByNonDeletedAsync(),
-                true when onlyActive == true => await _userService.GetAllByNonDeletedAndActiveAsync(),
-                _ => await _userService.GetAllAsync()
-            };
-        }
-        else
-        {
-            users = await _userService.GetAllAsync();
-        }
-
         return Ok(users);
     }
+    
+    [Authorize(Roles = RoleTypes.Admins)]
+    [HttpGet("getusercount")]
+    public async Task<IActionResult> GetUserCount(
+        [FromQuery(Name = "isDeleted")] bool isDeleted = false,
+        [FromQuery(Name = "isActive")] bool isActive = true)
+    {
+        var count = await _userService.GetUserCountAsync(isDeleted, isActive);
+        return Ok(count);
+    }
 
+    [Authorize(Roles = RoleTypes.Admins)]
     [HttpPut]
     public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userUpdateDto)
     {
@@ -67,7 +74,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
     
-    
+    [Authorize(Roles = RoleTypes.Admins)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
@@ -79,6 +86,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
     
+    [Authorize(Roles = RoleTypes.Admins)]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> RestoreUser([FromRoute] int id)
     {
@@ -90,6 +98,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
     
+    [Authorize(Roles = RoleTypes.SuperAdmin)]
     [HttpDelete("harddelete/{id:int}")]
     public async Task<IActionResult> HardDeleteUser([FromRoute] int id)
     {

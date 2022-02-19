@@ -10,7 +10,7 @@ namespace PLS.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(Roles = RoleTypes.SuperAdmin + "," + RoleTypes.Admin)]
+[Authorize(Roles = RoleTypes.Admins)]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;

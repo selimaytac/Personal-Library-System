@@ -6,9 +6,9 @@ namespace PLS.Services.Abstract;
 public interface IUserService
 {
     Task<IDataResult<UserDto>> GetAsync(int userId);
-    Task<IDataResult<UserListDto>> GetAllAsync();
-    Task<IDataResult<UserListDto>> GetAllByNonDeletedAsync();
-    Task<IDataResult<UserListDto>> GetAllByNonDeletedAndActiveAsync();
+    Task<IDataResult<UserDto>> GetCurrentUserAsync(string userName);
+    Task<IDataResult<UserListDto>> GetAllAsync(bool isDeleted = false, bool isActive = true);
+    Task<IDataResult<int>> GetUserCountAsync(bool isDeleted = false, bool isActive = true);
     Task<IResult> UpdateAsync(UserUpdateDto userUpdateDto, string updatedByUserName);
     Task<IResult> DeleteAsync(int userId, string deletedByUserName);
     Task<IResult> RestoreDeletedAsync(int userId, string restoredByUserName);
