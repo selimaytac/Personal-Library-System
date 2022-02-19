@@ -9,7 +9,7 @@ using PLS.Shared.Results.ComplexTypes;
 namespace PLS.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [Authorize(Roles = RoleTypes.Admins)]
 public class AuthController : ControllerBase
 {
@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost]
+    [HttpPost("authenticate")]
     public async Task<IActionResult> Authenticate(AuthenticateRequest request)
     {
         var response = await _authService.AuthenticateAsync(request);
@@ -33,15 +33,15 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> Register(UserAddDto user)
     {
         var response = await _authService.RegisterAsync(user);
         return Ok(response);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("get-by-id/{id:int}")]
+    public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var user = await _authService.GetAsync(id);
         return Ok(user);

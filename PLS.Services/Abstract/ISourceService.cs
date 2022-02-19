@@ -8,11 +8,11 @@ public interface ISourceService
 {
     Task<IDataResult<SourceDto>> GetAsync(int sourceId);
     Task<IDataResult<SourceListDto>> GetAllAsync(bool isDeleted = false, bool isActive = true);
-    Task<IDataResult<SourceListDto>> GetAllByCategoryAsync(int categoryId);
+    Task<IDataResult<SourceListDto>> GetAllByCategoryAsync(int categoryId,bool isDeleted = false, bool isActive = true);
+    Task<IDataResult<SourceListDto>> GetAllByTagsAsync(int[] tagIds, bool isDeleted = false, bool isActive = true);
     Task<IDataResult<int>> GetSourceCount(bool isDeleted = false, bool isActive = true);
-    Task<IDataResult<SourceListDto>> GetAllByTagsAsync(int[]? tagIds);
     Task<IDataResult<Source>> AddAsync(SourceAddDto sourceAddDto, string addedByUser);
-    Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser);
+    Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser, string userRole);
     Task<IResult> DeleteAsync(int sourceId, string deletedByUser);
     Task<IResult> RestoreDeletedAsync(int sourceId, string restoredByUser);
     

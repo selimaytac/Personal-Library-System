@@ -1,7 +1,9 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using PLS.Data.Abstract;
 using PLS.Entities.Concrete;
+using PLS.Entities.ConstTypes;
 using PLS.Entities.Dtos;
 using PLS.Services.Abstract;
 using PLS.Shared.Results.Abstract;
@@ -52,13 +54,15 @@ public class SourceService : ISourceService
         return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
     }
 
-    public async Task<IDataResult<SourceListDto>> GetAllByCategoryAsync(int categoryId)
+    public async Task<IDataResult<SourceListDto>> GetAllByCategoryAsync(int categoryId, bool isDeleted = false,
+        bool isActive = true)
     {
         var categoryExists = await _unitOfWork.Categories.AnyAsync(s => s.Id == categoryId);
 
         if (!categoryExists) return new DataResult<SourceListDto>(ResultStatus.Error, "Category not found.", null);
 
-        var sources = await _unitOfWork.Sources.GetAllAsync(s => s.CategoryId == categoryId);
+        var sources = await _unitOfWork.Sources.GetAllAsync(s =>
+            s.CategoryId == categoryId && s.IsDeleted == isDeleted && s.IsActive == isActive);
 
         if (sources.Any())
             return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
@@ -71,13 +75,17 @@ public class SourceService : ISourceService
         return new DataResult<SourceListDto>(ResultStatus.Error, "No sources found.", null);
     }
 
-    public async Task<IDataResult<SourceListDto>> GetAllByTagsAsync(int[] tagIds)
+    public async Task<IDataResult<SourceListDto>> GetAllByTagsAsync(int[] tagIds, bool isDeleted = false,
+        bool isActive = true)
     {
+        // if(tagIds.Length == 0) return new DataResult<SourceListDto>(ResultStatus.Error, "TagIds can not be zero.", null);
+
         var tagsExists = await _unitOfWork.Tags.AnyAsync(s => tagIds.Contains(s.Id));
 
         if (!tagsExists) return new DataResult<SourceListDto>(ResultStatus.Error, "Tag not found.", null);
 
-        var sources = await _unitOfWork.Sources.GetAllAsync(s => tagIds.Contains(s.Id));
+        var sources = await _unitOfWork.Sources.GetAllAsync(s =>
+            s.IsDeleted == isDeleted && s.IsActive == isActive && s.Tags.Any(t => tagIds.Contains(t.Id)));
 
         if (sources.Any())
             return new DataResult<SourceListDto>(ResultStatus.Success, $"{sources.Count} records found.",
@@ -118,12 +126,23 @@ public class SourceService : ISourceService
         return new DataResult<Source>(ResultStatus.Success, $"Source {source.Id} added.", source);
     }
 
-    public async Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser)
+    public async Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser, string userRole)
     {
-        var sourceExists = await _unitOfWork.Sources.AnyAsync(s => s.Id == sourceUpdateDto.Id);
+        var updateSource = await _unitOfWork.Sources.GetAsync(s => s.Id == sourceUpdateDto.Id);
 
-        if (sourceExists)
+        if (updateSource != null!)
         {
+            if (userRole == RoleTypes.User)
+            {
+                var userHasSource = await _unitOfWork.Sources.AnyAsync(s =>
+                    s.User.UserName == updatedByUser && s.Id == sourceUpdateDto.Id);
+                if (!userHasSource)
+                {
+                    return new Result(ResultStatus.Error,
+                        "A user with the User role cannot edit another user's resource.");
+                }
+            }
+
             var source = _mapper.Map<Source>(sourceUpdateDto);
             source.ModifiedByName = updatedByUser;
             source.ModifiedDate = DateTime.Now;

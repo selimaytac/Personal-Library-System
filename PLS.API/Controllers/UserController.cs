@@ -1,17 +1,14 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PLS.Entities.Concrete;
 using PLS.Entities.ConstTypes;
 using PLS.Entities.Dtos;
 using PLS.Services.Abstract;
-using PLS.Shared.Results.Abstract;
-using PLS.Shared.Results.ComplexTypes;
-using PLS.Shared.Results.Concrete;
 
 namespace PLS.API.Controllers;
 
-[ApiController]
 [Route("api/users")]
+[ApiController]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -28,19 +25,19 @@ public class UserController : ControllerBase
         var user = await _userService.GetAsync(id);
         return Ok(user);
     }
-    
+
     [Authorize(Roles = RoleTypes.All)]
-    [HttpGet("getcurrentuser")]
+    [HttpGet("get-current-user")]
     public async Task<IActionResult> GetCurrentUser()
     {
         var userName = User?.Identity?.Name;
-        
-        if(string.IsNullOrEmpty(userName)) return BadRequest("User is not logged in.");
-        
+
+        if (string.IsNullOrEmpty(userName)) return BadRequest("User is not logged in.");
+
         var user = await _userService.GetCurrentUserAsync(userName);
         return Ok(user);
     }
-    
+
     [Authorize(Roles = RoleTypes.Admins)]
     [HttpGet]
     public async Task<IActionResult> GetAllUsers(
@@ -48,12 +45,12 @@ public class UserController : ControllerBase
         [FromQuery(Name = "isActive")] bool isActive = true)
     {
         var users = await _userService.GetAllAsync(isDeleted, isActive);
-        
+
         return Ok(users);
     }
-    
+
     [Authorize(Roles = RoleTypes.Admins)]
-    [HttpGet("getusercount")]
+    [HttpGet("get-user-count")]
     public async Task<IActionResult> GetUserCount(
         [FromQuery(Name = "isDeleted")] bool isDeleted = false,
         [FromQuery(Name = "isActive")] bool isActive = true)
@@ -62,48 +59,49 @@ public class UserController : ControllerBase
         return Ok(count);
     }
 
-    [Authorize(Roles = RoleTypes.Admins)]
+    [Authorize(Roles = RoleTypes.All)]
     [HttpPut]
     public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userUpdateDto)
     {
-        var updatedBy = User?.Identity?.Name;
-        
-        if(string.IsNullOrEmpty(updatedBy)) return BadRequest("User is not logged in.");
-        
-        var result = await _userService.UpdateAsync(userUpdateDto, updatedBy);
+        var updatedBy = User.Identity?.Name;
+        var userRole = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrEmpty(userRole) && string.IsNullOrEmpty(updatedBy))
+            return BadRequest("User is not logged in.");
+
+        var result = await _userService.UpdateAsync(userUpdateDto, updatedBy!, userRole!);
         return Ok(result);
     }
-    
+
     [Authorize(Roles = RoleTypes.Admins)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
         var deletedBy = User?.Identity?.Name;
-        
-        if(string.IsNullOrEmpty(deletedBy)) return BadRequest("User is not logged in.");
-        
+
+        if (string.IsNullOrEmpty(deletedBy)) return BadRequest("User is not logged in.");
+
         var result = await _userService.DeleteAsync(id, deletedBy);
         return Ok(result);
     }
-    
+
     [Authorize(Roles = RoleTypes.Admins)]
-    [HttpPut("{id:int}")]
+    [HttpPut("restore-user/{id:int}")]
     public async Task<IActionResult> RestoreUser([FromRoute] int id)
     {
         var restoredBy = User?.Identity?.Name;
-        
-        if(string.IsNullOrEmpty(restoredBy)) return BadRequest("User is not logged in.");
-        
+
+        if (string.IsNullOrEmpty(restoredBy)) return BadRequest("User is not logged in.");
+
         var result = await _userService.DeleteAsync(id, restoredBy);
         return Ok(result);
     }
-    
+
     [Authorize(Roles = RoleTypes.SuperAdmin)]
-    [HttpDelete("harddelete/{id:int}")]
+    [HttpDelete("hard-delete/{id:int}")]
     public async Task<IActionResult> HardDeleteUser([FromRoute] int id)
     {
         var result = await _userService.HardDeleteAsync(id);
         return Ok(result);
     }
-    
 }
