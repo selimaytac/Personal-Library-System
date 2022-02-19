@@ -11,6 +11,7 @@ public class UnitOfWork : IUnitOfWork
     private EFCategoryRepository _categoryRepository;
     private EFRoleRepository _roleRepository;
     private EFUserRepository _userRepository;
+    private EFTagRepository _tagRepository;
 
     public UnitOfWork(PLSContext context)
     {
@@ -26,6 +27,7 @@ public class UnitOfWork : IUnitOfWork
     public ICategoryRepository Categories => _categoryRepository?? new EFCategoryRepository(_context);
     public ISourceRepository Sources => _sourceRepository ?? new EFSourceRepository(_context);
     public IRoleRepository Roles => _roleRepository ?? new EFRoleRepository(_context);
+    public ITagRepository Tags => _tagRepository ?? new EFTagRepository(_context);
 
     public async Task<int> SaveAsync()
     {

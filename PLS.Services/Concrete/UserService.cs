@@ -30,7 +30,7 @@ public class UserService : IUserService
 
     public async Task<IDataResult<UserDto>> GetAsync(int userId)
     {
-        var user = await _unitOfWork.Users.GetAsync(u => u.Id == userId, include => include.Role);
+        var user = await _unitOfWork.Users.GetAsync(u => u.Id == userId);
         if (user != null)
             return new DataResult<UserDto>(ResultStatus.Success, new UserDto
             {
@@ -85,8 +85,8 @@ public class UserService : IUserService
 
     public async Task<IResult> UpdateAsync(UserUpdateDto userUpdateDto, string updatedByUserName)
     {
-        var userExist = await _unitOfWork.Users.AnyAsync(u => u.Id == userUpdateDto.Id);
-        if (userExist)
+        var userExists = await _unitOfWork.Users.AnyAsync(u => u.Id == userUpdateDto.Id);
+        if (userExists)
         {
             var isMailUniq = await _unitOfWork.Users.AnyAsync(u => u.Email == userUpdateDto.Email && u.Id != userUpdateDto.Id);
 
@@ -118,18 +118,35 @@ public class UserService : IUserService
 
     public async Task<IResult> DeleteAsync(int userId, string deletedByUserName)
     {
-        var userExist = await _unitOfWork.Users.AnyAsync(u => u.Id == userId);
-        if (userExist)
-        {
-            var user = await _unitOfWork.Users.GetAsync(u => u.Id == userId);
-            // TODO: Write a restore method and change it.
-            user.IsDeleted = !user.IsDeleted;
-            user.ModifiedDate = DateTime.Now;
-            user.ModifiedByName = deletedByUserName;
+        var deletedUser = await _unitOfWork.Users.GetAsync(u => u.Id == userId);
 
-            await _unitOfWork.Users.UpdateAsync(user);
+        if (deletedUser != null)
+        {
+            deletedUser.IsDeleted = true;
+            deletedUser.ModifiedDate = DateTime.Now;
+            deletedUser.ModifiedByName = deletedByUserName;
+
+            await _unitOfWork.Users.UpdateAsync(deletedUser);
             await _unitOfWork.SaveAsync();
-            return new Result(ResultStatus.Success, $"{user.UserName} has been successfully deleted.");
+            return new Result(ResultStatus.Success, $"{deletedUser.UserName} has been successfully deleted.");
+        }
+
+        return new Result(ResultStatus.Error, $"There is no user with this id: {userId}.");
+    }
+
+    public async Task<IResult> RestoreDeletedAsync(int userId, string restoredByUserName)
+    {
+        var deletedUser = await _unitOfWork.Users.GetAsync(u => u.Id == userId);
+
+        if (deletedUser != null)
+        {
+            deletedUser.IsDeleted = false;
+            deletedUser.ModifiedDate = DateTime.Now;
+            deletedUser.ModifiedByName = restoredByUserName;
+
+            await _unitOfWork.Users.UpdateAsync(deletedUser);
+            await _unitOfWork.SaveAsync();
+            return new Result(ResultStatus.Success, $"{deletedUser.UserName} has been successfully restored.");
         }
 
         return new Result(ResultStatus.Error, $"There is no user with this id: {userId}.");

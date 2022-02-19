@@ -6,5 +6,6 @@ public interface IUnitOfWork : IAsyncDisposable
     ICategoryRepository Categories { get; }
     ISourceRepository Sources { get; }
     IRoleRepository Roles { get; }
+    ITagRepository Tags { get; }
     Task<int> SaveAsync();
 }

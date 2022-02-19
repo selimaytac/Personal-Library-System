@@ -79,6 +79,17 @@ public class UserController : ControllerBase
         return Ok(result);
     }
     
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> RestoreUser([FromRoute] int id)
+    {
+        var restoredBy = User?.Identity?.Name;
+        
+        if(string.IsNullOrEmpty(restoredBy)) return BadRequest("User is not logged in.");
+        
+        var result = await _userService.DeleteAsync(id, restoredBy);
+        return Ok(result);
+    }
+    
     [HttpDelete("harddelete/{id:int}")]
     public async Task<IActionResult> HardDeleteUser([FromRoute] int id)
     {

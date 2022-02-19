@@ -11,5 +11,6 @@ public interface IUserService
     Task<IDataResult<UserListDto>> GetAllByNonDeletedAndActiveAsync();
     Task<IResult> UpdateAsync(UserUpdateDto userUpdateDto, string updatedByUserName);
     Task<IResult> DeleteAsync(int userId, string deletedByUserName);
+    Task<IResult> RestoreDeletedAsync(int userId, string restoredByUserName);
     Task<IResult> HardDeleteAsync(int userId);
 }

@@ -33,6 +33,18 @@ public class TagMap : IEntityTypeConfiguration<Tag>
             IsDeleted = false,
             CreatedByName = "Initial",
             ModifiedByName = "Initial"
-        });
+        },
+            new Tag
+            {
+                Id = 2,
+                TagName = "Docker",
+                TagDescription ="Docker is a containerization engine for Linux and Windows.",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                IsActive = true,
+                IsDeleted = false,
+                CreatedByName = "Initial",
+                ModifiedByName = "Initial"
+            });
     }
 }
