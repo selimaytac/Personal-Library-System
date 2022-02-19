@@ -23,11 +23,6 @@ public class SourceAddDto
     [MinLength(2, ErrorMessage = "{0} must be more than {1} characters.")]
     public string Language { get; set; }
     
-    [DisplayName("UserId")]
-    [Required(ErrorMessage = "{0} cannot be empty.")]
-    [Range(1, int.MaxValue, ErrorMessage = "{0} cannot be zero.")]
-    public int UserId { get; set; }
-
     [DisplayName("CategoryId")]
     [Required(ErrorMessage = "{0} cannot be empty.")]
     [Range(1, int.MaxValue, ErrorMessage = "{0} cannot be zero.")]

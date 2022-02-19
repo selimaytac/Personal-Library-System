@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using PLS.Data.Abstract;
 using PLS.Entities.Concrete;
@@ -111,9 +110,23 @@ public class SourceService : ISourceService
     {
         var source = _mapper.Map<Source>(sourceAddDto);
 
+        if (source == null) return new DataResult<Source>(ResultStatus.Error, "Source can not be null.", null!);
+
+        var user = await _unitOfWork.Users.GetAsync(u => u.UserName == addedByUser);
+        if (user == null) return new DataResult<Source>(ResultStatus.Error, "User can not be null.", null!);
+
+        source.UserId = user.Id;
+
         if (sourceAddDto.TagIds?.Length > 0)
         {
-            var tags = await _unitOfWork.Tags.GetAllAsync(s => sourceAddDto.TagIds.Contains(s.Id));
+            var tags = new List<Tag>();
+
+            foreach (var tagId in sourceAddDto.TagIds)
+            {
+                var tag = await _unitOfWork.Tags.GetAsync(t => t.Id == tagId);
+                tags.Add(tag);
+            }
+
             source.Tags = tags;
         }
 
@@ -128,19 +141,17 @@ public class SourceService : ISourceService
 
     public async Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser, string userRole)
     {
-        var updateSource = await _unitOfWork.Sources.GetAsync(s => s.Id == sourceUpdateDto.Id);
+        var updateSource = await _unitOfWork.Sources.AnyAsync(s => s.Id == sourceUpdateDto.Id);
 
-        if (updateSource != null!)
+        if (updateSource)
         {
             if (userRole == RoleTypes.User)
             {
                 var userHasSource = await _unitOfWork.Sources.AnyAsync(s =>
                     s.User.UserName == updatedByUser && s.Id == sourceUpdateDto.Id);
                 if (!userHasSource)
-                {
                     return new Result(ResultStatus.Error,
                         "A user with the User role cannot edit another user's resource.");
-                }
             }
 
             var source = _mapper.Map<Source>(sourceUpdateDto);
@@ -155,12 +166,21 @@ public class SourceService : ISourceService
         return new Result(ResultStatus.Error, "Source not found.");
     }
 
-    public async Task<IResult> DeleteAsync(int sourceId, string deletedByUser)
+    public async Task<IResult> DeleteAsync(int sourceId, string deletedByUser, string userRole)
     {
         var deletedSource = await _unitOfWork.Sources.GetAsync(s => s.Id == sourceId);
 
         if (deletedSource != null)
         {
+            if (userRole == RoleTypes.User)
+            {
+                var userHasSource = await _unitOfWork.Sources.AnyAsync(s =>
+                    s.User.UserName == deletedByUser && s.Id == deletedSource.Id);
+                if (!userHasSource)
+                    return new Result(ResultStatus.Error,
+                        "A user with the User role cannot delete another user's resource.");
+            }
+
             deletedSource.IsDeleted = true;
             deletedSource.ModifiedDate = DateTime.Now;
             deletedSource.ModifiedByName = deletedByUser;
@@ -173,12 +193,21 @@ public class SourceService : ISourceService
         return new Result(ResultStatus.Error, "Source not found.");
     }
 
-    public async Task<IResult> RestoreDeletedAsync(int sourceId, string restoredByUser)
+    public async Task<IResult> RestoreDeletedAsync(int sourceId, string restoredByUser, string userRole)
     {
         var deletedSource = await _unitOfWork.Sources.GetAsync(s => s.Id == sourceId);
 
         if (deletedSource != null)
         {
+            if (userRole == RoleTypes.User)
+            {
+                var userHasSource = await _unitOfWork.Sources.AnyAsync(s =>
+                    s.User.UserName == restoredByUser && s.Id == deletedSource.Id);
+                if (!userHasSource)
+                    return new Result(ResultStatus.Error,
+                        "A user with the User role cannot restore another user's resource.");
+            }
+
             deletedSource.IsDeleted = false;
             deletedSource.ModifiedDate = DateTime.Now;
             deletedSource.ModifiedByName = restoredByUser;
@@ -195,14 +224,13 @@ public class SourceService : ISourceService
     {
         var source = await _unitOfWork.Sources.GetAsync(s => s.Id == sourceId);
 
-        if (source != null)
-        {
-            await _unitOfWork.Sources.DeleteAsync(source);
-            await _unitOfWork.SaveAsync();
-            return new Result(ResultStatus.Success,
-                $"SourceId: {source.Id} has been successfully deleted from the database.");
-        }
+        if (source == null)
+            return new Result(ResultStatus.Error, "Source not found.");
 
-        return new Result(ResultStatus.Error, "Source not found.");
+        await _unitOfWork.Sources.DeleteAsync(source);
+        await _unitOfWork.SaveAsync();
+
+        return new Result(ResultStatus.Success,
+            $"SourceId: {source.Id} has been successfully deleted from the database.");
     }
 }

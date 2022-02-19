@@ -13,8 +13,8 @@ public interface ISourceService
     Task<IDataResult<int>> GetSourceCount(bool isDeleted = false, bool isActive = true);
     Task<IDataResult<Source>> AddAsync(SourceAddDto sourceAddDto, string addedByUser);
     Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser, string userRole);
-    Task<IResult> DeleteAsync(int sourceId, string deletedByUser);
-    Task<IResult> RestoreDeletedAsync(int sourceId, string restoredByUser);
+    Task<IResult> DeleteAsync(int sourceId, string deletedByUser, string userRole);
+    Task<IResult> RestoreDeletedAsync(int sourceId, string restoredByUser, string userRole);
     
     Task<IResult> HardDeleteAsync(int sourceId);
 }

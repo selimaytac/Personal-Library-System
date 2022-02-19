@@ -77,23 +77,25 @@ public class UserController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
-        var deletedBy = User?.Identity?.Name;
+        var deletedBy = User.Identity?.Name;
+        var userRole = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
 
-        if (string.IsNullOrEmpty(deletedBy)) return BadRequest("User is not logged in.");
+        if (string.IsNullOrEmpty(userRole) && string.IsNullOrEmpty(deletedBy))
+            return BadRequest("User is not logged in.");
 
-        var result = await _userService.DeleteAsync(id, deletedBy);
+        var result = await _userService.DeleteAsync(id, deletedBy!, userRole!);
         return Ok(result);
     }
 
     [Authorize(Roles = RoleTypes.Admins)]
-    [HttpPut("restore-user/{id:int}")]
+    [HttpGet("restore-user/{id:int}")]
     public async Task<IActionResult> RestoreUser([FromRoute] int id)
     {
         var restoredBy = User?.Identity?.Name;
 
         if (string.IsNullOrEmpty(restoredBy)) return BadRequest("User is not logged in.");
 
-        var result = await _userService.DeleteAsync(id, restoredBy);
+        var result = await _userService.RestoreDeletedAsync(id, restoredBy);
         return Ok(result);
     }
 

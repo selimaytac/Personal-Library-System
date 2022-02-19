@@ -86,11 +86,16 @@ public class UserService : IUserService
         var userExists = await _unitOfWork.Users.GetAsync(u => u.Id == userUpdateDto.Id, u => u.Role);
         if (userExists != null)
         {
+            var updatedByUser = await _unitOfWork.Users.GetAsync(u => u.UserName == updatedByUserName);
+            
+            if(updatedByUser == null)       
+                return new Result(ResultStatus.Error, "No such user was found.");
+            
             switch (userRole)
             {
                 case RoleTypes.Admin when userExists.Role.Name == RoleTypes.SuperAdmin:
                     return new Result(ResultStatus.Error, "Admin can not update SuperAdmin.");
-                case RoleTypes.User when userExists.Id != userUpdateDto.Id:
+                case RoleTypes.User when userExists.Id != updatedByUser.Id:
                     return new Result(ResultStatus.Error, "User can not update other users.");
             }
 
@@ -125,12 +130,15 @@ public class UserService : IUserService
         return new Result(ResultStatus.Error, $"There is no user with this id: {userUpdateDto.Id}.");
     }
 
-    public async Task<IResult> DeleteAsync(int userId, string deletedByUserName)
+    public async Task<IResult> DeleteAsync(int userId, string deletedByUserName, string userRole)
     {
         var deletedUser = await _unitOfWork.Users.GetAsync(u => u.Id == userId);
 
         if (deletedUser != null)
         {
+            if (userRole == RoleTypes.Admin && deletedUser.Role.Name == RoleTypes.SuperAdmin)
+                return new Result(ResultStatus.Error, "Admin can not delete SuperAdmin.");
+
             deletedUser.IsDeleted = true;
             deletedUser.ModifiedDate = DateTime.Now;
             deletedUser.ModifiedByName = deletedByUserName;

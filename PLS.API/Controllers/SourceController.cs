@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PLS.Entities.Concrete;
 using PLS.Entities.ConstTypes;
 using PLS.Entities.Dtos;
 using PLS.Services.Abstract;
@@ -21,7 +20,7 @@ public class SourceController : ControllerBase
 
     [Authorize(Roles = RoleTypes.All)]
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get([FromRoute] int id)
+    public async Task<IActionResult> GetSource([FromRoute] int id)
     {
         var source = await _sourceService.GetAsync(id);
         return Ok(source);
@@ -63,7 +62,7 @@ public class SourceController : ControllerBase
     }
 
     [Authorize(Roles = RoleTypes.All)]
-    [HttpGet("")]
+    [HttpGet("get-source-count")]
     public async Task<IActionResult> GetSourceCount(
         [FromQuery(Name = "isDeleted")] bool isDeleted = false,
         [FromQuery(Name = "isActive")] bool isActive = true)
@@ -99,5 +98,43 @@ public class SourceController : ControllerBase
         var response = await _sourceService.UpdateAsync(sourceUpdateDto, userName!, userRole!);
 
         return Ok(response);
+    }
+
+    [Authorize(Roles = RoleTypes.All)]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteSource([FromRoute] int id)
+    {
+        var userName = User.Identity?.Name;
+        var userRole = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrEmpty(userRole) && string.IsNullOrEmpty(userName))
+            return BadRequest("User is not logged in.");
+
+        var response = await _sourceService.DeleteAsync(id, userName!, userRole!);
+
+        return Ok(response);
+    }
+
+    [Authorize(Roles = RoleTypes.All)]
+    [HttpGet("restore-user/{id:int}")]
+    public async Task<IActionResult> RestoreSource([FromRoute] int id)
+    {
+        var userName = User.Identity?.Name;
+        var userRole = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrEmpty(userRole) && string.IsNullOrEmpty(userName))
+            return BadRequest("User is not logged in.");
+
+        var response = await _sourceService.RestoreDeletedAsync(id, userName!, userRole!);
+
+        return Ok(response);
+    }
+
+    [Authorize(Roles = RoleTypes.SuperAdmin)]
+    [HttpDelete("hard-delete/{id:int}")]
+    public async Task<IActionResult> HardDeleteUser([FromRoute] int id)
+    {
+        var result = await _sourceService.HardDeleteAsync(id);
+        return Ok(result);
     }
 }
