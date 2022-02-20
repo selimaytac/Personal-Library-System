@@ -116,7 +116,7 @@ public class SourceController : ControllerBase
     }
 
     [Authorize(Roles = RoleTypes.All)]
-    [HttpGet("restore-user/{id:int}")]
+    [HttpGet("restore-source/{id:int}")]
     public async Task<IActionResult> RestoreSource([FromRoute] int id)
     {
         var userName = User.Identity?.Name;
@@ -126,6 +126,36 @@ public class SourceController : ControllerBase
             return BadRequest("User is not logged in.");
 
         var response = await _sourceService.RestoreDeletedAsync(id, userName!, userRole!);
+
+        return Ok(response);
+    }
+
+    [Authorize(Roles = RoleTypes.All)]
+    [HttpPost("/{id:int}/add-tag")]
+    public async Task<IActionResult> AddTagToSource([FromRoute] int id, [FromBody] int[] tagIds)
+    {
+        var userName = User.Identity?.Name;
+        var userRole = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrEmpty(userRole) && string.IsNullOrEmpty(userName))
+            return BadRequest("User is not logged in.");
+
+        var response = await _sourceService.AddTagsToSource(id, tagIds, userName!, userRole!);
+
+        return Ok(response);
+    }
+    
+    [Authorize(Roles = RoleTypes.All)]
+    [HttpPost("/{id:int}/remove-tag")]
+    public async Task<IActionResult> RemoveTagFromSource([FromRoute] int id, [FromBody] int[] tagIds)
+    {
+        var userName = User.Identity?.Name;
+        var userRole = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrEmpty(userRole) && string.IsNullOrEmpty(userName))
+            return BadRequest("User is not logged in.");
+
+        var response = await _sourceService.DeleteTagsFromSource(id, tagIds, userName!, userRole!);
 
         return Ok(response);
     }

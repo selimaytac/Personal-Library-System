@@ -15,6 +15,7 @@ public class PLSContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-CJDTP3H;Initial Catalog=PLS;Integrated Security=True");
+        optionsBuilder.LogTo(Console.WriteLine);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
