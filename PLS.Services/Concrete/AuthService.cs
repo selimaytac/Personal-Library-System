@@ -1,11 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using PLS.Data.Abstract;
 using PLS.Entities.Concrete;
 using PLS.Entities.Dtos;
@@ -19,17 +13,20 @@ namespace PLS.Services.Concrete;
 
 public class AuthService : IAuthService
 {
+    private readonly IAuthUtils _authUtils;
     private readonly IConfiguration _configuration;
+    private readonly IJwtUtils _jwtUtils;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IJwtUtils _jwtUtils;
 
-    public AuthService(IConfiguration configuration, IMapper mapper, IUnitOfWork unitOfWork, IJwtUtils jwtUtils)
+    public AuthService(IConfiguration configuration, IMapper mapper, IUnitOfWork unitOfWork, IJwtUtils jwtUtils,
+        IAuthUtils authUtils)
     {
         _configuration = configuration;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _jwtUtils = jwtUtils;
+        _authUtils = authUtils;
     }
 
     public async Task<IDataResult<User>> RegisterAsync(UserAddDto userAddDto)
@@ -40,7 +37,7 @@ public class AuthService : IAuthService
             return new DataResult<User>(ResultStatus.Error,
                 "User with this email already exists", null);
 
-        CreatePasswordHash(userAddDto.Password, out var passwordHash, out var passwordSalt);
+        _authUtils.CreatePasswordHash(userAddDto.Password, out var passwordHash, out var passwordSalt);
 
         var user = _mapper.Map<User>(userAddDto);
         user.PasswordHash = passwordHash;
@@ -58,15 +55,13 @@ public class AuthService : IAuthService
         var user = await _unitOfWork.Users.GetAsync(u => u.Id == userId);
 
         if (user != null)
-        {
             return new DataResult<UserDto>(ResultStatus.Success,
                 $"The user {user.UserName} has been successfully found.",
                 new UserDto
                 {
                     User = user,
-                    ResultStatus = ResultStatus.Success,
+                    ResultStatus = ResultStatus.Success
                 });
-        }
 
         return new DataResult<UserDto>(ResultStatus.Error, "User not found.", null);
     }
@@ -80,31 +75,11 @@ public class AuthService : IAuthService
     {
         var user = await _unitOfWork.Users.GetAsync(x => x.UserName == request.Username, y => y.Role);
 
-        if (user == null || !VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
-        {
+        if (user == null || !_authUtils.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
             return new DataResult<string>(ResultStatus.Error, "Wrong username or password.", null);
-        }
 
         var jwtToken = _jwtUtils.GenerateJwtToken(user);
 
         return new DataResult<string>(ResultStatus.Success, "Successfully authorized.", jwtToken);
-    }
-
-    private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-    {
-        using var hmac = new HMACSHA512();
-
-        passwordSalt = hmac.Key;
-
-        passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-    }
-
-    private bool VerifyPassword(string password, byte[] passwordHash, byte[] passwordSalt)
-    {
-        using var hmac = new HMACSHA512(passwordSalt);
-
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-        return computedHash.SequenceEqual(passwordHash);
     }
 }

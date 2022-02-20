@@ -1,12 +1,9 @@
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PLS.Entities.Concrete;
-using PLS.Entities.Enums;
 using PLS.Services.Utilities.Abstract;
 
 namespace PLS.Services.Utilities.Concrete;
@@ -24,10 +21,10 @@ public class JwtUtils : IJwtUtils
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Role, user.Role.Name)
+            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.Role, user.Role.Name)
         };
-        
+
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
@@ -43,5 +40,4 @@ public class JwtUtils : IJwtUtils
 
         return jwt;
     }
-
 }

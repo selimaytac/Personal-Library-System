@@ -1,54 +1,49 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Extensions;
-using PLS.Entities.Concrete;
+using PLS.Entities.ConstTypes;
 using PLS.Entities.Dtos;
-using PLS.Entities.Enums;
 using PLS.Services.Abstract;
+using PLS.Services.Utilities.Abstract;
 using PLS.Shared.Results.ComplexTypes;
 
-namespace PLS.API.Controllers
+namespace PLS.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize(Roles = RoleTypes.Admins)]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+
+    public AuthController(IAuthService authService)
     {
-        private IAuthService _authService;
+        _authService = authService;
+    }
 
-        public AuthController(IAuthService authService)
-        {
-            _authService = authService;
-        }
-        
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Authenticate(AuthenticateRequest request)
-        {
-            var response = await _authService.AuthenticateAsync(request);
+    [AllowAnonymous]
+    [HttpPost("authenticate")]
+    public async Task<IActionResult> Authenticate(AuthenticateRequest request)
+    {
+        var response = await _authService.AuthenticateAsync(request);
 
-            if (response.ResultStatus == ResultStatus.Success)
-                return Ok(response.Data);
+        if (response.ResultStatus == ResultStatus.Success)
+            return Ok(response.Data);
 
-            return Unauthorized(response);
-        }
-        
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Register(UserAddDto user)
-        {
-            var response = await _authService.RegisterAsync(user);
-            return Ok(response);
-        }
+        return Unauthorized(response);
+    }
 
-        [Authorize(Roles = nameof(RoleEnum.Admin))]
-        [HttpGet("[action]/{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var user = await _authService.GetAsync(id);
-            return Ok(user);
-        }
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(UserAddDto user)
+    {
+        var response = await _authService.RegisterAsync(user);
+        return Ok(response);
+    }
+
+    [HttpGet("get-by-id/{id:int}")]
+    public async Task<IActionResult> GetById([FromRoute] int id)
+    {
+        var user = await _authService.GetAsync(id);
+        return Ok(user);
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PLS.Data.Concrete.EntityFramework.Contexts;
 
@@ -11,9 +12,10 @@ using PLS.Data.Concrete.EntityFramework.Contexts;
 namespace PLS.Data.Migrations
 {
     [DbContext(typeof(PLSContext))]
-    partial class PLSContextModelSnapshot : ModelSnapshot
+    [Migration("20220218140258_role-seeds-updated")]
+    partial class roleseedsupdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,21 +71,6 @@ namespace PLS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(3588),
-                            Description = ".NET Tech",
-                            IsActive = true,
-                            IsDeleted = false,
-                            ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(3589),
-                            Name = ".NET",
-                            Note = "Initial"
-                        });
                 });
 
             modelBuilder.Entity("PLS.Entities.Concrete.Role", b =>
@@ -139,36 +126,36 @@ namespace PLS.Data.Migrations
                         {
                             Id = 1,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1334),
+                            CreatedDate = new DateTime(2022, 2, 18, 17, 2, 58, 298, DateTimeKind.Local).AddTicks(7655),
                             Description = "SuperAdmin has all permissions and can access to configurations.",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1335),
-                            Name = "SuperAdmin"
+                            ModifiedDate = new DateTime(2022, 2, 18, 17, 2, 58, 298, DateTimeKind.Local).AddTicks(7656),
+                            Name = "User"
                         },
                         new
                         {
                             Id = 2,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1340),
+                            CreatedDate = new DateTime(2022, 2, 18, 17, 2, 58, 298, DateTimeKind.Local).AddTicks(7662),
                             Description = "Admin has all permissions.",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1341),
+                            ModifiedDate = new DateTime(2022, 2, 18, 17, 2, 58, 298, DateTimeKind.Local).AddTicks(7663),
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 3,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1345),
+                            CreatedDate = new DateTime(2022, 2, 18, 17, 2, 58, 298, DateTimeKind.Local).AddTicks(7667),
                             Description = "User can only update allowed resources.",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1345),
+                            ModifiedDate = new DateTime(2022, 2, 18, 17, 2, 58, 298, DateTimeKind.Local).AddTicks(7667),
                             Name = "User"
                         });
                 });
@@ -237,80 +224,6 @@ namespace PLS.Data.Migrations
                     b.ToTable("Sources", (string)null);
                 });
 
-            modelBuilder.Entity("PLS.Entities.Concrete.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedByName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedByName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("TagDescription")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("TagName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2975),
-                            IsActive = true,
-                            IsDeleted = false,
-                            ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2976),
-                            TagDescription = ".NET is a free and open-source, managed computer software framework for Windows, Linux, and macOS operating systems.",
-                            TagName = ".NET"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2981),
-                            IsActive = true,
-                            IsDeleted = false,
-                            ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2982),
-                            TagDescription = "Docker is a containerization engine for Linux and Windows.",
-                            TagName = "Docker"
-                        });
-                });
-
             modelBuilder.Entity("PLS.Entities.Concrete.User", b =>
                 {
                     b.Property<int>("Id")
@@ -377,38 +290,6 @@ namespace PLS.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(9811),
-                            Email = "testmail@gmail.com",
-                            IsActive = true,
-                            IsDeleted = false,
-                            ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(9812),
-                            PasswordHash = new byte[] { 212, 254, 97, 17, 153, 50, 203, 66, 250, 247, 68, 69, 77, 18, 171, 132, 20, 128, 245, 172, 43, 51, 79, 222, 255, 158, 195, 133, 12, 30, 218, 50, 195, 181, 245, 94, 55, 58, 111, 139, 62, 245, 8, 171, 9, 112, 166, 163, 76, 207, 180, 25, 109, 242, 205, 176, 199, 21, 37, 51, 91, 232, 52, 39 },
-                            PasswordSalt = new byte[] { 21, 230, 119, 83, 64, 209, 103, 220, 2, 182, 222, 96, 131, 232, 166, 145, 211, 106, 89, 62, 43, 39, 21, 106, 169, 30, 101, 27, 184, 205, 8, 43, 227, 37, 61, 239, 219, 223, 185, 25, 6, 187, 71, 147, 247, 157, 127, 111, 227, 234, 108, 248, 58, 32, 127, 21, 33, 66, 58, 3, 50, 113, 230, 247, 172, 2, 118, 188, 24, 188, 152, 43, 110, 43, 162, 172, 52, 45, 128, 175, 27, 27, 16, 119, 178, 57, 34, 41, 234, 118, 145, 235, 126, 114, 75, 141, 107, 245, 120, 183, 103, 210, 167, 107, 108, 61, 75, 157, 140, 0, 72, 239, 46, 79, 233, 13, 193, 143, 132, 37, 23, 178, 66, 177, 99, 240, 100, 167 },
-                            RoleId = 1,
-                            UserName = "FirstUser"
-                        });
-                });
-
-            modelBuilder.Entity("SourceTag", b =>
-                {
-                    b.Property<int>("SourcesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SourcesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("SourceTag");
                 });
 
             modelBuilder.Entity("PLS.Entities.Concrete.Source", b =>
@@ -439,21 +320,6 @@ namespace PLS.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("SourceTag", b =>
-                {
-                    b.HasOne("PLS.Entities.Concrete.Source", null)
-                        .WithMany()
-                        .HasForeignKey("SourcesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PLS.Entities.Concrete.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("PLS.Entities.Concrete.Category", b =>

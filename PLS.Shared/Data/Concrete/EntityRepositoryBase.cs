@@ -14,7 +14,7 @@ public class EntityRepositoryBase<TEntity> : IEntityRepository<TEntity> where TE
         _context = context;
     }
 
-    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>>? predicate,
+    public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>>? predicate,
         params Expression<Func<TEntity, object>>[] includeProperties)
     {
         IQueryable<TEntity> query = _context.Set<TEntity>();

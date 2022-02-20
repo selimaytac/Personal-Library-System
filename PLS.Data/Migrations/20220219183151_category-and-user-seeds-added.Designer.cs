@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PLS.Data.Concrete.EntityFramework.Contexts;
 
@@ -11,9 +12,10 @@ using PLS.Data.Concrete.EntityFramework.Contexts;
 namespace PLS.Data.Migrations
 {
     [DbContext(typeof(PLSContext))]
-    partial class PLSContextModelSnapshot : ModelSnapshot
+    [Migration("20220219183151_category-and-user-seeds-added")]
+    partial class categoryanduserseedsadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,12 +77,12 @@ namespace PLS.Data.Migrations
                         {
                             Id = 1,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(3588),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(1695),
                             Description = ".NET Tech",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(3589),
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(1696),
                             Name = ".NET",
                             Note = "Initial"
                         });
@@ -139,36 +141,36 @@ namespace PLS.Data.Migrations
                         {
                             Id = 1,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1334),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(8952),
                             Description = "SuperAdmin has all permissions and can access to configurations.",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1335),
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(8953),
                             Name = "SuperAdmin"
                         },
                         new
                         {
                             Id = 2,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1340),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(8959),
                             Description = "Admin has all permissions.",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1341),
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(8960),
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 3,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1345),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(8964),
                             Description = "User can only update allowed resources.",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(1345),
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(8964),
                             Name = "User"
                         });
                 });
@@ -289,11 +291,11 @@ namespace PLS.Data.Migrations
                         {
                             Id = 1,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2975),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 349, DateTimeKind.Local).AddTicks(368),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2976),
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 349, DateTimeKind.Local).AddTicks(369),
                             TagDescription = ".NET is a free and open-source, managed computer software framework for Windows, Linux, and macOS operating systems.",
                             TagName = ".NET"
                         },
@@ -301,11 +303,11 @@ namespace PLS.Data.Migrations
                         {
                             Id = 2,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2981),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 349, DateTimeKind.Local).AddTicks(374),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 12, DateTimeKind.Local).AddTicks(2982),
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 349, DateTimeKind.Local).AddTicks(375),
                             TagDescription = "Docker is a containerization engine for Linux and Windows.",
                             TagName = "Docker"
                         });
@@ -383,14 +385,14 @@ namespace PLS.Data.Migrations
                         {
                             Id = 1,
                             CreatedByName = "Initial",
-                            CreatedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(9811),
+                            CreatedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(7626),
                             Email = "testmail@gmail.com",
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedByName = "Initial",
-                            ModifiedDate = new DateTime(2022, 2, 20, 19, 32, 55, 11, DateTimeKind.Local).AddTicks(9812),
-                            PasswordHash = new byte[] { 212, 254, 97, 17, 153, 50, 203, 66, 250, 247, 68, 69, 77, 18, 171, 132, 20, 128, 245, 172, 43, 51, 79, 222, 255, 158, 195, 133, 12, 30, 218, 50, 195, 181, 245, 94, 55, 58, 111, 139, 62, 245, 8, 171, 9, 112, 166, 163, 76, 207, 180, 25, 109, 242, 205, 176, 199, 21, 37, 51, 91, 232, 52, 39 },
-                            PasswordSalt = new byte[] { 21, 230, 119, 83, 64, 209, 103, 220, 2, 182, 222, 96, 131, 232, 166, 145, 211, 106, 89, 62, 43, 39, 21, 106, 169, 30, 101, 27, 184, 205, 8, 43, 227, 37, 61, 239, 219, 223, 185, 25, 6, 187, 71, 147, 247, 157, 127, 111, 227, 234, 108, 248, 58, 32, 127, 21, 33, 66, 58, 3, 50, 113, 230, 247, 172, 2, 118, 188, 24, 188, 152, 43, 110, 43, 162, 172, 52, 45, 128, 175, 27, 27, 16, 119, 178, 57, 34, 41, 234, 118, 145, 235, 126, 114, 75, 141, 107, 245, 120, 183, 103, 210, 167, 107, 108, 61, 75, 157, 140, 0, 72, 239, 46, 79, 233, 13, 193, 143, 132, 37, 23, 178, 66, 177, 99, 240, 100, 167 },
+                            ModifiedDate = new DateTime(2022, 2, 19, 21, 31, 51, 348, DateTimeKind.Local).AddTicks(7627),
+                            PasswordHash = new byte[] { 205, 24, 124, 0, 62, 254, 99, 20, 83, 253, 100, 161, 170, 25, 31, 247, 172, 176, 243, 120, 238, 180, 9, 13, 112, 232, 213, 9, 162, 244, 68, 246, 24, 8, 85, 124, 59, 145, 81, 202, 46, 197, 144, 150, 208, 191, 29, 53, 82, 121, 29, 218, 199, 246, 254, 208, 147, 226, 78, 38, 33, 62, 73, 170 },
+                            PasswordSalt = new byte[] { 8, 216, 244, 69, 81, 81, 184, 245, 36, 138, 240, 108, 155, 170, 128, 249, 97, 151, 75, 207, 63, 118, 45, 103, 67, 46, 13, 131, 63, 221, 243, 112, 222, 235, 157, 147, 54, 245, 243, 117, 233, 99, 193, 177, 219, 245, 105, 94, 226, 135, 81, 119, 38, 130, 84, 169, 1, 241, 146, 98, 71, 207, 62, 102, 105, 203, 103, 152, 123, 223, 215, 72, 53, 24, 38, 117, 210, 208, 210, 173, 246, 59, 209, 79, 68, 103, 92, 96, 31, 71, 203, 91, 198, 55, 213, 144, 153, 21, 99, 22, 203, 201, 156, 105, 81, 36, 24, 217, 13, 33, 33, 174, 103, 200, 45, 60, 75, 87, 217, 224, 229, 125, 180, 25, 193, 235, 162, 188 },
                             RoleId = 1,
                             UserName = "FirstUser"
                         });

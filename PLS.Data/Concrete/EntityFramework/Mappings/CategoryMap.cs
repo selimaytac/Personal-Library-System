@@ -20,7 +20,21 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
         builder.Property(c => c.IsDeleted).IsRequired();
         builder.Property(c => c.Note).HasMaxLength(500);
         builder.ToTable("Categories");
+
+        builder.HasData(new Category
+        {
+            Id = 1,
+            Description = ".NET Tech",
+            Name = ".NET",
+            CreatedByName = "Initial",
+            CreatedDate = DateTime.Now,
+            ModifiedByName = "Initial",
+            ModifiedDate = DateTime.Now,
+            IsActive = true,
+            IsDeleted = false,
+            Note = "Initial"
+        });
     }
-    // Todo: Add data here
+    
     
 }
