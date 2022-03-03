@@ -1,10 +1,10 @@
-using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PLS.Entities.Concrete;
+using PLS.Data.Concrete.EntityFramework.Contexts;
 using PLS.Services.AutoMapper.Profiles;
 using PLS.Services.Extensions;
 using Swashbuckle.AspNetCore.Filters;
@@ -24,8 +24,13 @@ var builder = WebApplication.CreateBuilder(args);
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
     services.AddAutoMapper(typeof(UserProfile), typeof(SourceProfile));
+    services.AddDbContext<PLSContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    
+    // Loading services (unitofwork, services, utils etc.)
     services.LoadMyServices();
-
+    
+    
     builder.Services.AddSwaggerGen(options =>
     {
         options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols;
 using PLS.Data.Concrete.EntityFramework.Mappings;
 using PLS.Entities.Concrete;
 
@@ -12,9 +14,11 @@ public class PLSContext : DbContext
     public DbSet<Category>? Categories { get; set; }
     public DbSet<Tag>? Tags { get; set; }
 
+    public PLSContext(DbContextOptions<PLSContext> options) : base(options)
+    { }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-CJDTP3H;Initial Catalog=PLS;Integrated Security=True");
         optionsBuilder.LogTo(Console.WriteLine);
     }
 
