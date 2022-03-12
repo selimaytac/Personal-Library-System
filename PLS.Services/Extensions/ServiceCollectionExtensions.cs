@@ -13,7 +13,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection LoadMyServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddDbContext<PLSContext>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         
         serviceCollection.AddScoped<IJwtUtils, JwtUtils>();
