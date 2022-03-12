@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
-    services.AddAutoMapper(typeof(UserProfile), typeof(SourceProfile));
+    services.AddAutoMapper(typeof(UserProfile), typeof(SourceProfile), typeof(TagProfile));
     services.AddDbContext<PLSContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     
