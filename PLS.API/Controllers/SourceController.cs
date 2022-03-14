@@ -160,9 +160,9 @@ public class SourceController : ControllerBase
         return Ok(response);
     }
 
-    [Authorize(Roles = RoleTypes.SuperAdmin)]
+    [Authorize(Roles = RoleTypes.Admins)]
     [HttpDelete("hard-delete/{id:int}")]
-    public async Task<IActionResult> HardDeleteUser([FromRoute] int id)
+    public async Task<IActionResult> HardDeleteSource([FromRoute] int id)
     {
         var result = await _sourceService.HardDeleteAsync(id);
         return Ok(result);

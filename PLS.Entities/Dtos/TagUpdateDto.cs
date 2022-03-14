@@ -25,7 +25,5 @@ public class TagUpdateDto
     [Required(ErrorMessage = "{0} cannot be empty.")]
     public bool IsActive { get; set; }
     
-    public int[]? TagIds { get; set; }
-    
     public string? Note { get; set; } = null;
 }
