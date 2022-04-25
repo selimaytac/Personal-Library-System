@@ -111,11 +111,11 @@ public class SourceService : ISourceService
             return new DataResult<Source>(ResultStatus.Error, "Category not found.", null!);
 
         var user = await _unitOfWork.Users.GetAsync(u => u.UserName == addedByUser);
-        if (user == null) return new DataResult<Source>(ResultStatus.Error, "User can not be null.", null!);
+        if (user == null) return new DataResult<Source>(ResultStatus.Error, "User cannot be null.", null!);
 
         var source = _mapper.Map<Source>(sourceAddDto);
 
-        if (source == null) return new DataResult<Source>(ResultStatus.Error, "Source can not be null.", null!);
+        if (source == null) return new DataResult<Source>(ResultStatus.Error, "Source cannot be null.", null!);
 
         source.UserId = user.Id;
 
@@ -143,7 +143,7 @@ public class SourceService : ISourceService
         await _unitOfWork.Sources.AddAsync(source);
         await _unitOfWork.SaveAsync();
 
-        return new DataResult<Source>(ResultStatus.Success, $"Source {source.Id} added.", source);
+        return new DataResult<Source>(ResultStatus.Success, $"Source {source.Id} created successfully.", source);
     }
 
     public async Task<IResult> UpdateAsync(SourceUpdateDto sourceUpdateDto, string updatedByUser, string userRole)
@@ -265,7 +265,7 @@ public class SourceService : ISourceService
         }
 
         if (tagIds.Length <= 0)
-            return new Result(ResultStatus.Error, "Tags can not be null.");
+            return new Result(ResultStatus.Error, "Tags cannot be null.");
 
         foreach (var tagId in tagIds)
         {

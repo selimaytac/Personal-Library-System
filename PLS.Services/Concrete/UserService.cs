@@ -94,9 +94,9 @@ public class UserService : IUserService
             switch (userRole)
             {
                 case RoleTypes.Admin when userExists.Role.Name == RoleTypes.SuperAdmin:
-                    return new Result(ResultStatus.Error, "Admin can not update SuperAdmin.");
+                    return new Result(ResultStatus.Error, "Admin cannot update SuperAdmin.");
                 case RoleTypes.User when userExists.Id != updatedByUser.Id:
-                    return new Result(ResultStatus.Error, "User can not update other users.");
+                    return new Result(ResultStatus.Error, "User cannot update other users.");
             }
 
             var isMailUniq =
@@ -137,7 +137,7 @@ public class UserService : IUserService
         if (deletedUser != null)
         {
             if (userRole == RoleTypes.Admin && deletedUser.Role.Name == RoleTypes.SuperAdmin)
-                return new Result(ResultStatus.Error, "Admin can not delete SuperAdmin.");
+                return new Result(ResultStatus.Error, "Admin cannot delete SuperAdmin.");
 
             deletedUser.IsDeleted = true;
             deletedUser.ModifiedDate = DateTime.Now;
